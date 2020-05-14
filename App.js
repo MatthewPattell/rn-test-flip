@@ -11,7 +11,8 @@ import {
 	SafeAreaView,
 	StatusBar,
 	Button,
-	View
+	View,
+	Text
 } from 'react-native';
 
 import { Timer } from './src/components';
@@ -20,16 +21,18 @@ import { Timer as Timer3 } from './src/components3';
 
 const FirstSlide = () => {
 	return (
-		<View>
-			<Button title='First My Button' />
+		// !!! FIX SIZE HERE !!!
+		<View style={{width: 80,backgroundColor: 'gray', paddingTop: 40}}>
+				<Text>tqwertyuio</Text>
 		</View>
 	)
 }
 
 const SecondSlide = () => {
 	return (
-		<View>
-			<Button title='Two Button' />
+		// !!! FIX SIZE HERE !!!
+		<View style={{width: 80, backgroundColor: 'gray', paddingTop: 50}}>
+				<Text>12345rt6y7890</Text>
 		</View>
 	)
 }

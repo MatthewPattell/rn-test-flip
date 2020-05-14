@@ -20,17 +20,22 @@ function FlipCard({
 						left: 0,
 					}
 				: {
-						left: '50%',
+					left: '50%',
 					},
 				flipCardStyle,
 				{
 					overflow: 'hidden',
+
 				},
 			]}
 		>
 			<View style={[style.number, {
+			}, numberStyle, {
+				// !!! FIX SIZE HERE !!!
+				width: 80,
 				transform: [type === 'front' ? { translateX: size * translateSize } : { translateX: -size * translateSize }],
-			}, numberStyle]}
+
+			}]}
 			>
 				{number}
 			</View>
