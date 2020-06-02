@@ -27,7 +27,7 @@ class Timer extends React.Component
 	}
 
 	render() {
-		const { wrapperStyle } = this.props;
+		const { wrapperStyle, panHandlers } = this.props;
 		const { firstSlide, secondSlide } = this.state;
 
 		return (
@@ -36,6 +36,7 @@ class Timer extends React.Component
 					ref={r => this.card = r}
 					number={firstSlide}
 					previousNumber={secondSlide}
+					panHandlers={panHandlers}
 				/>
 			</View>
 		);

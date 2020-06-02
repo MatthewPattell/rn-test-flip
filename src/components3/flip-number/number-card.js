@@ -23,11 +23,11 @@ class NumberCard extends React.Component
 		this.frontRef = null;
 		this.backRef  = null;
 
-		this.speed     = 0;
+		this.speed = 0;
 
 		this.state = {
-			showSlide: true
-		}
+			showSlide: true,
+		};
 	}
 
 	componentDidMount() {
@@ -45,13 +45,13 @@ class NumberCard extends React.Component
 		this.speed = 800;
 	}
 
-	shouldComponentUpdate(nextProps) {
-		const { number } = this.props;
-		if (nextProps.number !== number) {
-			this.animateTick();
-		}
-		return true;
-	}
+	// shouldComponentUpdate(nextProps) {
+	// const { number } = this.props;
+	// if (nextProps.number !== number) {
+	// 	this.animateTick();
+	// }
+	// return true;
+	// }
 
 	setFrontRef = (ref) => {
 		this.frontRef = ref;
@@ -61,25 +61,35 @@ class NumberCard extends React.Component
 		this.backRef = ref;
 	};
 
-	animateTick = () => {
-		this.setState({showSlide: false});
+	animateTick = (frontVal = 0, backVal = 180, speed) => {
+		const frontStartValue = -180;
+		const frontEndValue = 0;
 
-		this.rotateFront.setValue(-180);
-		this.rotateBack.setValue(0);
+		const backStartValue = 0;
+		const backEndValue = 180;
+
+		if (this.state.showSlide === true) {
+			this.setState({ showSlide: false });
+
+			this.rotateFront.setValue(frontStartValue);
+			this.rotateBack.setValue(backStartValue);
+		}
 
 		Animated.parallel([
 			Animated.timing(this.rotateFront, {
-				toValue:         0,
-				duration:        this.speed,
+				toValue:         frontVal,
+				duration:        speed || this.speed,
 				useNativeDriver: true,
 			}),
 			Animated.timing(this.rotateBack, {
-				toValue:         180,
-				duration:        this.speed,
+				toValue:         backVal,
+				duration:        speed || this.speed,
 				useNativeDriver: true,
 			}),
-		]).start(() => {
-			this.setState({showSlide: true});
+		]).start(({ finished }) => {
+			if (finished && this.rotateBack._value === backEndValue && this.rotateFront._value === frontEndValue) {
+				this.setState({ showSlide: true });
+			}
 		});
 	};
 
@@ -97,7 +107,7 @@ class NumberCard extends React.Component
 
 	renderSlide() {
 		const {
-				  number
+				  number,
 			  } = this.props;
 
 		return (
@@ -148,16 +158,26 @@ class NumberCard extends React.Component
 		);
 	}
 
+	getPagesWidth()
+	{
+		const {
+				  size,
+			  }             = this.props;
+
+		return size * 1.2
+	}
+
 	render() {
 		const {
-				  size, numberWrapperStyle,
-			  } = this.props;
-		const { showSlide } = this.state
+				  size, numberWrapperStyle, panHandlers,
+			  }             = this.props;
+		const { showSlide } = this.state;
 
 		return (
 			<View style={[style.numberWrapper,
 				{ width: size * 1.2, height: size * 1.2 },
 				numberWrapperStyle]}
+				  {...panHandlers}
 			>
 				{showSlide ? this.renderSlide() : this.renderPages()}
 			</View>
