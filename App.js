@@ -24,16 +24,16 @@ const FirstSlide = () => {
 	return (
 		// !!! FIX SIZE HERE !!!
 		<View style={{width: 80,backgroundColor: 'gray', paddingTop: 40}}>
-				<Text>tqwertyuio</Text>
+				<Text>Hello: 1</Text>
 		</View>
 	)
 }
 
-const SecondSlide = () => {
+const SecondSlide = ({title}) => {
 	return (
 		// !!! FIX SIZE HERE !!!
 		<View style={{width: 80, backgroundColor: 'gray', paddingTop: 50}}>
-				<Text>12345rt6y7890</Text>
+				<Text>{title}</Text>
 		</View>
 	)
 }
@@ -45,10 +45,21 @@ const getInterpolationPoint = (screenRange, animatedRange, screenPoint) => {
 	return y2 + ((y1 - y2) / (x1 - x2)) * (screenPoint - x2)
 }
 
+class Class
+{
+	static counter;
+}
+
 const App: () => React$Node = () => {
 	const ref = useRef();
 
+	const [counter, setCounter] = useState(2)
+
+	Class.counter = counter
+
 	let pagesWidth = {}
+
+	let move = false;
 
 	const panResponder = useRef(
 		PanResponder.create({
@@ -83,19 +94,24 @@ const App: () => React$Node = () => {
 					direction: leftDirection ? 'left' : 'right'
 				}
 
-				// Подготавливаем предыдущий или след. слайд в зависимости от того, с какой кромки начали тянуть
-				ref.current.setNextSlide(<SecondSlide />);
 				return true;
 			},
 			onPanResponderMove: (evt, gestureState) => {
+				if (!move) {
+					// Подготавливаем предыдущий или след. слайд в зависимости от того, с какой кромки начали тянуть
+					ref.current.setNextSlide(<SecondSlide title={`Hello: ${Class.counter}`} />);
+					move = true;
+				}
+
 				const currPoint = Number(gestureState.moveX)
 				const angleFront = getInterpolationPoint([0, pagesWidth.width], [0, -180], currPoint);
 				const angleBack = getInterpolationPoint([0, pagesWidth.width], [180, 0], currPoint);
 
 				ref.current.card.animateTick(angleFront, angleBack, 1)
-				console.log('MOVE', gestureState.moveX, angleFront, angleBack)
+				// console.log('MOVE', gestureState.moveX, angleFront, angleBack)
 			},
 			onPanResponderRelease: (evt, gestureState) => {
+				move = false;
 				// Нужно прочекать, каков статус поворота страниц, например если rotateFront (была -180) а сейчас
 				// это -50 то доигрываем анимацию переворачивания вперед если -150 то назад
 
@@ -115,6 +131,8 @@ const App: () => React$Node = () => {
 				if (ref.current.card.rotateFront._value > check) {
 					// Страница перевернута больше чем на половину + коэфф. 30 , доигрываем анимацию до конца
 					ref.current.card.animateTick()
+
+					setCounter(Class.counter + 1);
 				} else {
 					// Страница перевернута меньше чем на половину, возвращаем все назад (если такое поведение нужно)
 					ref.current.card.animateTick(-180, 0)
